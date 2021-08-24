@@ -8,7 +8,6 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -39,14 +38,7 @@ public class MobRegionCheck extends BukkitRunnable {
         }
         StateFlag.State targetSpawnState = query.queryState(BukkitAdapter.adapt(target.getLocation()), null, Flags.MOB_SPAWNING);
         if (targetSpawnState == StateFlag.State.DENY) {
-            Bukkit.getScheduler().runTask(JavaPlugin.getProvidingPlugin(getClass()), () -> mob.setTarget(
-                    mob.getNearbyEntities(10, 10, 10).parallelStream()
-                            .filter(HumanEntity.class::isInstance)
-                            .map(HumanEntity.class::cast)
-                            .filter(entity -> container.createQuery().queryState(BukkitAdapter.adapt(entity.getLocation()), null, Flags.MOB_SPAWNING) == StateFlag.State.ALLOW)
-                            .findAny()
-                            .orElse(null)
-            ));
+            Bukkit.getScheduler().runTask(JavaPlugin.getProvidingPlugin(getClass()), () -> mob.setTarget(null));
         }
     }
 }
