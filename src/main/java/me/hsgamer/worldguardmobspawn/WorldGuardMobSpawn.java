@@ -14,7 +14,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.world.EntitiesLoadEvent;
-import org.bukkit.event.world.EntitiesUnloadEvent;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -33,6 +32,15 @@ public final class WorldGuardMobSpawn extends BasePlugin implements Listener {
         return mainConfig;
     }
 
+    public void deleteTaggedEntity(LivingEntity livingEntity) {
+        taggedEntities.remove(livingEntity);
+    }
+
+    private void startTask(LivingEntity livingEntity) {
+        long time = mainConfig.getCheckFrequency();
+        new MobRegionCheck(this, livingEntity).runTaskTimerAsynchronously(this, time, time);
+    }
+
     @EventHandler
     public void onMobSpawn(CreatureSpawnEvent event) {
         Location location = event.getLocation();
@@ -48,13 +56,7 @@ public final class WorldGuardMobSpawn extends BasePlugin implements Listener {
             return;
         }
 
-        long time = mainConfig.getCheckFrequency();
-        new MobRegionCheck(event.getEntity()).runTaskTimerAsynchronously(this, time, time);
-    }
-
-    @EventHandler
-    public void onMobUnload(EntitiesUnloadEvent event) {
-        taggedEntities.removeIf(entity -> !entity.isValid());
+        startTask(event.getEntity());
     }
 
     @EventHandler
@@ -64,7 +66,6 @@ public final class WorldGuardMobSpawn extends BasePlugin implements Listener {
         }
 
         RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-        long time = mainConfig.getCheckFrequency();
         event.getEntities()
                 .parallelStream()
                 .filter(LivingEntity.class::isInstance)
@@ -78,7 +79,7 @@ public final class WorldGuardMobSpawn extends BasePlugin implements Listener {
                 .sequential()
                 .forEach(entity -> {
                     taggedEntities.add(entity);
-                    new MobRegionCheck(entity).runTaskTimerAsynchronously(this, time, time);
+                    startTask(entity);
                 });
     }
 }
