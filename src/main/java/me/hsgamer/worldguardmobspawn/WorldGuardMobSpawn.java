@@ -7,9 +7,9 @@ import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import me.hsgamer.hscore.bukkit.baseplugin.BasePlugin;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Mob;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -21,7 +21,7 @@ import java.util.Set;
 
 public final class WorldGuardMobSpawn extends BasePlugin implements Listener {
     private final MainConfig mainConfig = new MainConfig(this);
-    private final Set<Mob> taggedMobs = new HashSet<>();
+    private final Set<LivingEntity> taggedEntities = new HashSet<>();
 
     @Override
     public void enable() {
@@ -35,31 +35,26 @@ public final class WorldGuardMobSpawn extends BasePlugin implements Listener {
 
     @EventHandler
     public void onMobSpawn(CreatureSpawnEvent event) {
-        LivingEntity entity = event.getEntity();
-        if (!(entity instanceof Mob)) {
-            return;
-        }
-        Mob mob = (Mob) entity;
-
-        World world = event.getLocation().getWorld();
+        Location location = event.getLocation();
+        World world = location.getWorld();
         if (world == null || !mainConfig.getEnabledWorlds().contains(world.getName())) {
             return;
         }
 
         RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
         RegionQuery query = container.createQuery();
-        StateFlag.State spawnState = query.queryState(BukkitAdapter.adapt(mob.getLocation()), null, Flags.MOB_SPAWNING);
+        StateFlag.State spawnState = query.queryState(BukkitAdapter.adapt(location), null, Flags.MOB_SPAWNING);
         if (spawnState != StateFlag.State.ALLOW) {
             return;
         }
 
         long time = mainConfig.getCheckFrequency();
-        new MobRegionCheck(mob).runTaskTimerAsynchronously(this, time, time);
+        new MobRegionCheck(event.getEntity()).runTaskTimerAsynchronously(this, time, time);
     }
 
     @EventHandler
     public void onMobUnload(EntitiesUnloadEvent event) {
-        taggedMobs.removeIf(entity -> !entity.isValid());
+        taggedEntities.removeIf(entity -> !entity.isValid());
     }
 
     @EventHandler
@@ -72,9 +67,9 @@ public final class WorldGuardMobSpawn extends BasePlugin implements Listener {
         long time = mainConfig.getCheckFrequency();
         event.getEntities()
                 .parallelStream()
-                .filter(Mob.class::isInstance)
-                .map(Mob.class::cast)
-                .filter(entity -> !taggedMobs.contains(entity))
+                .filter(LivingEntity.class::isInstance)
+                .map(LivingEntity.class::cast)
+                .filter(entity -> !taggedEntities.contains(entity))
                 .filter(entity -> {
                     RegionQuery query = container.createQuery();
                     StateFlag.State spawnState = query.queryState(BukkitAdapter.adapt(entity.getLocation()), null, Flags.MOB_SPAWNING);
@@ -82,7 +77,7 @@ public final class WorldGuardMobSpawn extends BasePlugin implements Listener {
                 })
                 .sequential()
                 .forEach(entity -> {
-                    taggedMobs.add(entity);
+                    taggedEntities.add(entity);
                     new MobRegionCheck(entity).runTaskTimerAsynchronously(this, time, time);
                 });
     }
