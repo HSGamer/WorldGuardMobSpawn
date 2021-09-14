@@ -21,7 +21,7 @@ public class MobRegionCheck extends BukkitRunnable {
 
     @Override
     public void run() {
-        if (mob.isDead()) {
+        if (!mob.isValid()) {
             cancel();
             return;
         }

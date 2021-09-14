@@ -1,5 +1,5 @@
 name: WorldGuardMobSpawn
 version: '${project.version}'
 main: me.hsgamer.worldguardmobspawn.WorldGuardMobSpawn
-api-version: 1.13
+api-version: 1.17
 depend: [ WorldGuard ]
