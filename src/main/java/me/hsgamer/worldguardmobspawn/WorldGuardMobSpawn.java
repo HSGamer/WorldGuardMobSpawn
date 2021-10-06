@@ -9,6 +9,7 @@ import com.sk89q.worldguard.protection.regions.RegionQuery;
 import me.hsgamer.hscore.bukkit.baseplugin.BasePlugin;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -69,6 +70,7 @@ public final class WorldGuardMobSpawn extends BasePlugin implements Listener {
         event.getEntities()
                 .parallelStream()
                 .filter(LivingEntity.class::isInstance)
+                .filter(entity -> !(entity instanceof HumanEntity))
                 .map(LivingEntity.class::cast)
                 .filter(entity -> !taggedEntities.contains(entity))
                 .filter(entity -> {
