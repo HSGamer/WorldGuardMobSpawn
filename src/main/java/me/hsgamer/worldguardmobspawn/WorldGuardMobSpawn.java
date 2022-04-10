@@ -1,6 +1,8 @@
 package me.hsgamer.worldguardmobspawn;
 
-import me.hsgamer.hscore.bukkit.baseplugin.BasePlugin;
+import me.hsgamer.hscore.bukkit.config.BukkitConfig;
+import me.hsgamer.hscore.bukkit.simpleplugin.SimplePlugin;
+import me.hsgamer.hscore.config.proxy.ConfigGenerator;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.HumanEntity;
@@ -14,18 +16,13 @@ import org.codemc.worldguardwrapper.flag.WrappedState;
 import java.util.HashSet;
 import java.util.Set;
 
-public final class WorldGuardMobSpawn extends BasePlugin implements Listener {
-    private final MainConfig mainConfig = new MainConfig(this);
+public final class WorldGuardMobSpawn extends SimplePlugin implements Listener {
+    private final MainConfig mainConfig = ConfigGenerator.newInstance(MainConfig.class, new BukkitConfig(this, "config.yml"), true, true);
     private final Set<LivingEntity> taggedEntities = new HashSet<>();
 
     @Override
     public void enable() {
-        mainConfig.setup();
         registerListener(this);
-    }
-
-    public MainConfig getMainConfig() {
-        return mainConfig;
     }
 
     public void deleteTaggedEntity(LivingEntity livingEntity) {

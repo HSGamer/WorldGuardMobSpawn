@@ -91,18 +91,18 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>me.HSGamer</groupId>
-            <artifactId>HSCore-bukkit-baseplugin</artifactId>
+            <groupId>me.hsgamer</groupId>
+            <artifactId>hscore-bukkit-simpleplugin</artifactId>
             <version>${core.version}</version>
         </dependency>
         <dependency>
-            <groupId>me.HSGamer</groupId>
-            <artifactId>HSCore-bukkit-config</artifactId>
+            <groupId>me.hsgamer</groupId>
+            <artifactId>hscore-bukkit-config</artifactId>
             <version>${core.version}</version>
         </dependency>
         <dependency>
-            <groupId>me.HSGamer</groupId>
-            <artifactId>HSCore-config-annotated</artifactId>
+            <groupId>me.hsgamer</groupId>
+            <artifactId>hscore-config-proxy</artifactId>
             <version>${core.version}</version>
         </dependency>
         <dependency>
