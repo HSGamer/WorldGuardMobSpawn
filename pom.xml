@@ -46,6 +46,10 @@
                                     <pattern>me.hsgamer.hscore</pattern>
                                     <shadedPattern>me.hsgamer.worldguardmobspawn.core</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>org.codemc.worldguardwrapper</pattern>
+                                    <shadedPattern>me.hsgamer.worldguardmobspawn.worldguardwrapper</shadedPattern>
+                                </relocation>
                             </relocations>
                         </configuration>
                     </execution>
@@ -102,10 +106,9 @@
             <version>${core.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.sk89q.worldguard</groupId>
-            <artifactId>worldguard-bukkit</artifactId>
-            <version>7.0.5</version>
-            <scope>provided</scope>
+            <groupId>org.codemc.worldguardwrapper</groupId>
+            <artifactId>worldguardwrapper</artifactId>
+            <version>1.2.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

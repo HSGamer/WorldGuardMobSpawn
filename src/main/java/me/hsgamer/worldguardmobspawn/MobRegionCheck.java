@@ -1,16 +1,11 @@
 package me.hsgamer.worldguardmobspawn;
 
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldguard.WorldGuard;
-import com.sk89q.worldguard.protection.flags.Flags;
-import com.sk89q.worldguard.protection.flags.StateFlag;
-import com.sk89q.worldguard.protection.regions.RegionContainer;
-import com.sk89q.worldguard.protection.regions.RegionQuery;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.codemc.worldguardwrapper.flag.WrappedState;
 
 public class MobRegionCheck extends BukkitRunnable {
     private final WorldGuardMobSpawn instance;
@@ -28,10 +23,8 @@ public class MobRegionCheck extends BukkitRunnable {
             return;
         }
 
-        RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-        RegionQuery query = container.createQuery();
-        StateFlag.State spawnState = query.queryState(BukkitAdapter.adapt(livingEntity.getLocation()), null, Flags.MOB_SPAWNING);
-        if (spawnState == StateFlag.State.DENY) {
+        WrappedState spawnState = Flags.queryMobSpawningFlag(livingEntity.getLocation());
+        if (spawnState == WrappedState.DENY) {
             Bukkit.getScheduler().runTask(instance, livingEntity::remove);
             return;
         }
@@ -44,8 +37,8 @@ public class MobRegionCheck extends BukkitRunnable {
         if (target == null) {
             return;
         }
-        StateFlag.State targetSpawnState = query.queryState(BukkitAdapter.adapt(target.getLocation()), null, Flags.MOB_SPAWNING);
-        if (targetSpawnState == StateFlag.State.DENY) {
+        WrappedState targetSpawnState = Flags.queryMobSpawningFlag(target.getLocation());
+        if (targetSpawnState == WrappedState.DENY) {
             Bukkit.getScheduler().runTask(instance, () -> mob.setTarget(null));
         }
     }

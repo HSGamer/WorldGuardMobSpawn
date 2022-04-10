@@ -10,9 +10,9 @@ import java.util.List;
 
 public class MainConfig extends AnnotatedConfig {
     @ConfigPath("enabled-worlds")
-    private List<String> enabledWorlds = Collections.emptyList();
+    private final List<String> enabledWorlds = Collections.emptyList();
     @ConfigPath("check-frequency")
-    private long checkFrequency = 10;
+    private final long checkFrequency = 10;
 
     public MainConfig(Plugin plugin) {
         super(new BukkitConfig(plugin, "config.yml"));
