@@ -1,7 +1,7 @@
 package me.hsgamer.worldguardmobspawn;
 
 import me.hsgamer.hscore.bukkit.config.BukkitConfig;
-import me.hsgamer.hscore.config.AnnotatedConfig;
+import me.hsgamer.hscore.config.annotated.AnnotatedConfig;
 import me.hsgamer.hscore.config.annotation.ConfigPath;
 import org.bukkit.plugin.Plugin;
 
